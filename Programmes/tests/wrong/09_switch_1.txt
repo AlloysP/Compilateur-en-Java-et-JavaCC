@@ -1,0 +1,5 @@
+/* Toutes les Expressions (après les cases ou else) doivent être de même type */
+switch 1
+	case 0.0: print(0) 
+	else 0
+end

@@ -1,0 +1,4 @@
+/* Le Else est obligatoire */
+switch 1
+	case 0.0: print(0)
+end

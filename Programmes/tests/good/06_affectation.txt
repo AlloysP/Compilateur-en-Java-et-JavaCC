@@ -1,0 +1,53 @@
+let
+	var i := 1
+	var j := i + 1
+in
+	print(i);
+	print(j);
+end
+@EOF@
+let
+	var i := "1"
+	var j := i
+in
+	print(i+j);
+end
+@EOF@
+let
+	var i := 1
+	var j := (i + 1)*i
+in
+	print(i);
+	print(j)
+end
+@EOF@
+let var i := 10
+in
+  print(i);
+  let var i := i * i
+  in
+    print(i)
+  end;
+  print(i)
+end
+@EOF@
+let in 1 + 1 end
+@EOF@
+print(3 - let in 1 + 1 end)
+@EOF@
+let
+  var foo := 1
+  var bar := 1 + foo
+  var baz := bar * bar
+in
+  print(foo); print(bar * baz)
+end
+@EOF@
+let
+  var foo := 1
+  var bar := 1
+in
+  foo := (bar := 2) + 1;
+  print(foo);
+  print(bar)
+end

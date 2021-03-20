@@ -1,0 +1,63 @@
+print(+1)
+@EOF@
+print(-2 + 3.0)
+@EOF@
+print(+3 - 2)
+@EOF@
+print(0+1)	
+@EOF@
+print(1+1+1-1-1)
+@EOF@
+print(2-1)	
+@EOF@
+print(1*1)
+@EOF@
+print(2/2)
+@EOF@
+print(1<>2)
+@EOF@
+print(3=3)
+@EOF@
+print(1<2)
+@EOF@
+print(2>1)
+@EOF@
+print(2<=2)
+@EOF@
+print(1<=2)
+@EOF@
+print(2>=2)
+@EOF@
+print(2/2)
+@EOF@
+print(3.5-2.5)
+@EOF@	
+print(-1+2)
+@EOF@	
+print(2+-1)
+@EOF@	
+print(0--1)
+@EOF@
+print(1*2*3/1/2/3)
+@EOF@
+print((-1-(-2)))
+@EOF@
+print(1+2=(3<=4)+2)
+@EOF@
+print(1<2<3)	
+@EOF@
+print(1+1>=1<=1.5=1)
+@EOF@
+print(1<(2+2)=1)	
+@EOF@
+print(1.0<2 & 1=1.0)
+@EOF@
+print(3.0<2 | 1=1.0)
+@EOF@
+print(1=1 - 1<>1 + 1<2)
+@EOF@
+print((1=1) - (1<>1) = 1)
+@EOF@
+print(0|0|1|0)
+@EOF@
+print(1&1&1&1)

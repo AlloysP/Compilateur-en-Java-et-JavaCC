@@ -1,0 +1,5 @@
+let
+  var foo := "oK"
+in
+  foo := 1
+end

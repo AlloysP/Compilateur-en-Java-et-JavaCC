@@ -1,0 +1,23 @@
+let var i := 10
+in
+  print(i);
+  let var i := i * i
+  in
+    print(i)
+  end;
+  print(i)
+end
+@EOF@
+let in end
+@EOF@
+let
+in
+	1;
+	2; /* ';' optionnel */
+end
+@EOF@
+let
+in
+	print(1);
+	print(2)
+end

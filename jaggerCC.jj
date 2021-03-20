@@ -1,0 +1,244 @@
+// Options for JavaCC.
+options { LOOKAHEAD=1; STATIC=false; }
+//FORCE_LA_CHECK=true; }
+
+// Fonction principale
+PARSER_BEGIN(Jagger)
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Stack;
+import java.util.ArrayList;
+import java.util.List;
+public class Jagger
+{
+    public static void main() throws ParseException 
+      {
+      // S'il n'y a pas d'arguments on parse ce qui
+      // est tappé au clavier sur le terminal (System.in)
+      
+        Jagger parser = new Jagger(System.in);
+        parser.mainloop();
+      }
+      
+     public static void main(File pFile) throws ParseException // S'il y a un argument on parse le fichier dont le nom est donne en argument
+      {
+        try { 
+		InputStream in = new FileInputStream(pFile);
+		Jagger parser = new Jagger(in);
+        parser.mainloop();
+      	}
+      	catch (IOException e) {
+			e.printStackTrace();
+	     }
+	     
+       }
+    
+}
+PARSER_END(Jagger)
+
+TOKEN_MGR_DECLS : {
+static int commentDepth;
+}
+
+// Characters to ignore.
+SKIP: { "\n" | " " | "\r" | "\t"
+| < "/*" > { commentDepth = 1 ; }: COMMENT_STATE
+}
+
+<COMMENT_STATE> SKIP : // Pour les commentaires /* */
+{
+  < "/*" > { commentDepth += 1; }
+| < "*/" > { commentDepth -= 1; SwitchTo( commentDepth==0 ? DEFAULT : COMMENT_STATE ) ; } 
+| < ~[] >
+}
+					
+// Token specifications.
+TOKEN:
+{
+    < SWITCH: "switch" >
+|   < CASE: "case" >
+|   < FOR: "for" >
+|   < TO: "to" >
+|   < WHILE: "while" >
+|   < DO: "do" >
+|   < VAR: "var" >
+|   < LET: "let" >
+|   < IN: "in" >
+|   < END: "end" >
+|   < IF: "if" >  //
+|   < THEN: "then" >
+|   < ELSE: "else" >
+|   < PRINT: "print" >
+| 	< STR: "\"" ("\\"~[] | ~["\"", "\\"])* "\"">   // String
+|   < LETTERS : (< LETTERMAJ > | < LETTERMIN >)+ >
+|   < LETTERMAJ : (["a"-"z"]) >
+|   < LETTERMIN : (["a"-"z"]) >
+//| 	< CHARS: ("\\"~[] | ~["\"", "\\"])*>   // String
+|   < NUMBER: (<DIGIT>)+ ("." (<DIGIT>)*)? >  		// A number.
+|   < DIGIT: ["0"-"9"] >                      		// A decimal digit.
+|   < TEST_EOF: "@EOF@" >    // Token faisant office de EOF et qui permet d'écrire tous
+							 // les tests dans un seul fichier .txt
+}
+
+
+// Main loop
+void mainloop():
+{ Expression e1; }
+{
+    (
+      e1=expressionExec() (< TEST_EOF > | <EOF>)
+      { e1.initialiseParentsPuisTypes(new NullExpression()); Start.treatThisAST(e1); }
+    )*
+    
+}
+
+//// 
+//Expression ExpressionLetInEnd():
+//{ Expression e1; ListeNamesAndExpressions vListeNamesAndExpressions; List<Expression> listExp; }
+//{
+//   <LET> vListeNamesAndExpressions=declarationVariables() <IN> listExp=listeExpression() <END>
+//   {return new LetInEnd(vListeNamesAndExpressions, listExp);}
+//}
+
+
+// Les Expression executables qui ne retournent pas de valeur
+Expression expressionExec():
+{ Token t; Expression e1;}
+{
+  (
+    
+    < PRINT > "(" e1=operateurOR() ")" { return new Print(e1); }
+  )?
+  e1 = operateurOR() { return e1; }
+}
+
+// le 'OU'
+Expression operateurOR():
+{ Expression e1, e2; }
+{
+  e1=operateurAND()
+    (
+     	"|" e2=operateurAND() { e1 = new BinopAST("OR",e1,e2); }
+    )* { return e1; }
+}
+
+// le 'ET'
+Expression operateurAND():
+{ Expression e1, e2; }
+{
+  e1=comparaison()
+    (
+    "&" e2=comparaison() { e1 = new BinopAST("AND",e1,e2); }
+    )* { return e1; }
+}
+
+// Les comparateurs
+Expression comparaison():
+{ Expression e1, e2; Stack<String> stackSigne = new Stack<String>(); Stack<Expression> stackExpr  = new Stack<Expression>();}
+{
+    e1=expressionV() { stackExpr.push(e1); }
+    (
+      (
+	      ("<>" e2=expressionV()) { stackSigne.push("DIF"); stackExpr.push(e2);}
+	    | ("<=" e2=expressionV()) { stackSigne.push("INFEQ"); stackExpr.push(e2);}
+	    | ("<"  e2=expressionV()) { stackSigne.push("INF"); stackExpr.push(e2);}
+	    | (">"  e2=expressionV()) { stackSigne.push("SUP"); stackExpr.push(e2);}
+	    | (">=" e2=expressionV()) { stackSigne.push("SUPEQ"); stackExpr.push(e2);}
+	    | ("="  e2=expressionV()) { stackSigne.push("EQ"); stackExpr.push(e2);}
+  	  )+
+  	  { return JaggerCComplement.arrayToComparateurs(stackSigne, stackExpr); } // Voir JaggerCComplement.java
+    
+    )? { return e1; }
+}
+
+// Expression (the axiom).
+// E -> T ('+'T | '-'T)*
+Expression expressionV():
+{ Expression e1, e2; }
+{
+  
+    e1=term()
+    (
+      "+" e2=term() { e1 = new BinopAST("PLUS",e1,e2); }
+    | "-" e2=term() { e1 = new BinopAST("MOINS",e1,e2); }
+    )* { return e1; }
+}
+
+// Term.
+// T -> F ('*'F | '/'F)* 
+Expression term():
+{ Expression e1, e2; }
+{
+    e1=expressionExecValue()
+    (
+      "*" e2=expressionExecValue() { e1 = new BinopAST("MULTI",e1,e2); }
+    | "/" e2=expressionExecValue() { e1 = new BinopAST("DIV",e1,e2); }
+    )* { return e1; }
+}
+
+// Les Expression executables qui retournent des valeurs
+//Dans le cas du if then else il peut ne pas y avoir de else
+Expression expressionExecValue():
+{ Token t; Expression e1, e2, e3 = new NullExpression(), e4;
+  ListeNamesAndExpressions vListeNamesAndExpressions; List<Expression> listExp = new ArrayList<Expression>();
+  List<Expression> listExp2 = new ArrayList<Expression>();}
+{
+  (
+    <LET> vListeNamesAndExpressions=declarationVariables() <IN> listExp=listeExpression() <END>
+    {return new LetInEnd(vListeNamesAndExpressions, listExp);}
+|  <SWITCH> e1=operateurOR() (<CASE> e2=operateurOR() {listExp.add(e2);} ":" e3=expressionExec(){listExp2.add(e3);})*
+   <ELSE> e4=expressionExec() <END>
+	{return new Switch(e1, listExp, listExp2, e4);}
+|  <IF> e1=operateurOR() <THEN> e2=expressionExec() (<ELSE> e3=expressionExec())? {return new IfThenElse(e1,e2,e3);}
+| t=< LETTERS >
+	(
+		  ":=" e1 = operateurOR() { return new Affectation(new Variable(t.toString()), e1); }
+		|  { return new Variable(t.toString()); }
+	)
+|  < WHILE > e1=operateurOR() <DO> e3=expressionExec() {listExp.add(e3);}
+	{ return new While(e1, listExp); }
+|  <FOR> t=<LETTERS> ":=" e1=operateurOR() <TO> e2=operateurOR() <DO> e3=expressionExec() {listExp.add(e3);}
+	{ return new For(new Variable(t.toString(), true), e1, e2, listExp); }
+  )?
+  e1 = factor() { return e1; }
+}
+
+
+// Les primitifs (Strings, nombres positifs et négatifs)
+// et les parenthèses
+// et les variables 
+Expression factor():
+{ Token t; Expression e1; List<Expression> listeExp;}
+{
+	  t=<STR> { return new TigerString(t.toString()); }
+    |  "-" t= <NUMBER>  { return new Num(-1.0*Double.parseDouble(t.toString())); }
+	|  ("+")? t=<NUMBER> {return new Num(Double.parseDouble(t.toString())); }
+	| "(" listeExp=listeExpression() ")" { return new Sequence(listeExp); }
+}
+
+
+// 
+ListeNamesAndExpressions declarationVariables():
+{ Token t; Expression e1; List<String> listeToTreatNames=new ArrayList<String>();
+List<Expression> listeToTreatExpressions=new ArrayList<Expression>();}
+{
+    (
+      < VAR > t=< LETTERS > ":=" e1=operateurOR()
+      { listeToTreatNames.add(t.toString()); listeToTreatExpressions.add(e1);}
+    )*
+    { return new ListeNamesAndExpressions(listeToTreatNames, listeToTreatExpressions); }
+    
+}
+
+// 
+List<Expression> listeExpression():
+{ Expression e1; List<Expression> listeExp = new ArrayList<Expression>(); }
+{
+  (
+      e1=expressionExec() (";")?  { listeExp.add(e1); }
+    )*
+    { return listeExp; }
+}
+

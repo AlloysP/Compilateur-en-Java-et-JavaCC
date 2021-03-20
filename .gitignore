@@ -1,0 +1,15 @@
+*.class
+*.ctxt
+
+/JaggerConstants.java
+/ParseException.java
+/SimpleCharStream.java
+/Token.java
+/TokenMgrError.java
+/Jagger.java
+/JaggerTokenManager.java
+/JavaCCParserConstants.java
+/JavaCharStream.java
+/JavaCCParser.java
+/JavaCCParserTokenManager.java
+/ParseException.java

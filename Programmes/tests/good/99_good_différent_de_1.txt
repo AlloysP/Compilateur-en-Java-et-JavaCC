@@ -1,0 +1,13 @@
+print(1+2*3)
+@EOF@
+2.5/2.5
+@EOF@
+print(-1)
+@EOF@
+print("A" + 6 + " JB" + 0.07 )
+@EOF@
+print("output= " + (1+0))
+@EOF@
+print("foo"+"bar")
+@EOF@
+print("foo"<="bar")

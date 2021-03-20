@@ -1,0 +1,5 @@
+/* Test /* commentaire */ */
+/* Test /* Test  */ commentaire */
+/*  /* commentaire */ */
+/*  /* /*  */ */ /* */ */
+0

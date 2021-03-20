@@ -1,0 +1,7 @@
+print("foo"="foo")
+@EOF@
+print("foo">="bar")
+@EOF@
+print("" + 1.0)
+@EOF@
+print("1.0")
