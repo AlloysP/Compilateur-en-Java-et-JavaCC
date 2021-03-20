@@ -1,4 +1,4 @@
-# Compilateur Jagger
+# Compilateur
 
 ## Membres du projet 
 * Alloÿs PETIT - AlloysP
@@ -20,11 +20,14 @@ Taper `make check` dans le terminal va compiler et lancer le projet en lui donna
 
 ## Introduction 
 
-L'objectif de ce projet est de construire un interpréteur et un pretty-printer pour un language simple. Ce projet permet ainsi de mettre en pratique bon nombre de concepts abordés lors de la partie front-end du compilateur.
+L'objectif de ce projet était de construire un interpréteur et un pretty-printer pour un language simple. Ce projet permet ainsi de mettre en pratique bon nombre de concepts abordés lors de la partie front-end d'un compilateur:
+* La définition d'un parseur et d'un lexeur au travers de Javacc (https://javacc.org)
+* La mise en place d'un AST pour représenter les différents éléments du langage
+* La mise en place d'un pretty-printer permettant de s'assurer que les étapes de parsing et de scanning sont correctes
+* La mise en place d'un évaluateur permettant d'interpréter le code fourni en entrée
+* La mise en place de test et le packaging de l'application
 
-La syntaxe du langage que nous devons implémenter s'apparente à celle du langage `Tiger`, à l'exception du switch qui est un ajout de notre part. (https://assignments.lrde.epita.fr/reference_manual/tiger_language_reference_manual/tiger_language_reference_manual.html).
-
-Le sujet du projet se trouve à https://github.com/akimd/jagger.
+La syntaxe du langage que nous devons implémenter s'apparente à celle du langage `Tiger`, présenté sur le site de l'Epita, à l'exception du switch qui est un ajout de notre part. (https://assignments.lrde.epita.fr/reference_manual/tiger_language_reference_manual/tiger_language_reference_manual.html).
 
 ## Préambule 
 
@@ -34,8 +37,6 @@ Alloÿs n'ayant pas fait l'unité de Design Patern dans laquelle est présenté 
 
 
 ## Ce que nous avons fait
-
-### Consignes
 
 * Make marche : Notre projet peut se compiler à l'aide de la commande `make`, dès lors que l'on se trouve dans le dossier principal.
 
@@ -56,10 +57,6 @@ Alloÿs n'ayant pas fait l'unité de Design Patern dans laquelle est présenté 
 * Support de While : Nous avons créé une classe `While` fonctionnelle comprenant une `Expression` de condition (qui doit retourner un entier 0 ou 1), et une liste d'expressions à exécuter dans le `do`. Les tests indiqués fonctionnent comme prévus.
 
 * Support de For : Nous avons créé une classe `For` fonctionnelle contenant une liste d'expressions à exécuter pour chacune des variables de la boucle. Les tests indiqués fonctionnent comme prévus.
-
-
-
-### En complément (and beyond...)
 
 * Commentaires imbriqués : Nous avons implémenté les commentaires similaire à ceux du langage Tiger, ceux-ci pouvant être imbriqués et sont délimité par /* */.
 
