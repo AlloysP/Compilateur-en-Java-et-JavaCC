@@ -29,13 +29,6 @@ L'objectif de ce projet était de construire un interpréteur et un pretty-print
 
 La syntaxe du langage que nous devons implémenter s'apparente à celle du langage `Tiger`, présenté sur le site de l'Epita, à l'exception du switch qui est un ajout de notre part. (https://assignments.lrde.epita.fr/reference_manual/tiger_language_reference_manual/tiger_language_reference_manual.html).
 
-## Préambule 
-
-Au début du projet le groupe était uniquement composé d'Alloÿs et puis Maÿlis a ensuite rejoint le projet à mi-chemin suite à l'annulation de son départ pour le second semestre.
-
-Alloÿs n'ayant pas fait l'unité de Design Patern dans laquelle est présenté la technique du `visiteur`, le projet a été réalisé sans `visiteur`.
-
-
 ## Ce que nous avons fait
 
 * Make marche : Notre projet peut se compiler à l'aide de la commande `make`, dès lors que l'on se trouve dans le dossier principal.
